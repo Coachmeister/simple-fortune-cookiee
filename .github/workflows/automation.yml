@@ -1,0 +1,50 @@
+name: workflow
+on:
+  push:
+    branches:
+      - main
+  pull-request:
+    branches:
+      - main
+jobs:
+  clone-down:
+    name: clone down repo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: upload repo
+        uses: actions/upload-artifact@v2
+        with:
+          name: code
+          path: .
+  Build:
+    runs-on: ubuntu-latest
+    needs: clone-down
+  
+    steps:
+      - name: download code
+        uses: actions/download-artifact@v2
+        with:
+          name: code
+          path: .
+      - name: Build backend
+        run: "go build backend/main.go"
+      - name: build frontend
+        run: "go build frontend/main.go"
+      - name: upload repo
+        uses: actions/upload-artifact@v2
+        with:
+          name: code
+          path: .
+  Test:
+    runs-on: ubuntu-latest
+    needs: clone-down
+ 
+    steps:
+      - name: download something
+        uses: actions/download-artifact@v2
+        with:
+          name: code
+          path: .
+      - name: Test
+        run: "main_test.go"
